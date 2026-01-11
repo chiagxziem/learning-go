@@ -31,7 +31,7 @@ func literals() {
 	rL := 'a'
 
 	// 4. String Literal
-	// Basically a string. Use backslasjes to add a new line, tab, double quotes, another backslash in the string literal.
+	// Basically a string. Use backslashes to add a new line, tab, double quotes, another backslash in the string literal.
 	// "what the fuck is going on, \n\"Carlos"?"
 	sL := "what the \tfuck is going on, \n\"Carlos\"?"
 
@@ -73,7 +73,7 @@ func types() {
 	// only use them where approximate values are acceptable.
 	// all operators used for ints except % (modulus) can be used for floats.
 	// dividing a non-zero float by zero returns +Inf or -Inf (+ve or -ve infinity). dividing a float set to zero by zero returns NaN.
-	// dont ever compare two floats using the == pr != operators. if you really need to compare, defined a max allowed variance (epsilon) and check if the diff btw the two floats is greater.
+	// dont ever compare two floats using the == pr != operators. if you really need to compare, defined a max allowed variance (epsilon) and check if the diff btw the two floats is greater than epsilon.
 	// to really compare two floats, use the Go equivalent of the function `nearlyEqual` shown at "https://floating-point-gui.de/errors/comparison/".
 
 	//* Strings and Runes
@@ -164,11 +164,12 @@ func assignVars() {
 
 func constantVars() {
 	//* Using `const`
-	// `const` in Go are a way to give a name to literals. There's no way t o declare that a variable is immutable.
-	// COnstants in Go are quite unremarkable, unlike JS.
+	// `const` in Go are a way to give a name to literals. There's no way to declare that a variable is immutable.
+	// Constants in Go are quite unremarkable, unlike JS.
 
 	const cG = "hello"
 
+  // declaration list
 	const (
 		cV1      int = 10
 		cV2, cV3     = "bye!", false
