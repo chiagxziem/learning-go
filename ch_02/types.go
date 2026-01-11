@@ -138,7 +138,7 @@ func assignVars() {
 
 	fmt.Println(dV1, dV2, dV3, dV4, dV5, dV6, dV7)
 
-	// using the := operator
+	//* using the := operator
 	// when using the := operator, the type is inferred.
 	// `:=` is only valid inside a function. when declaring variables at the package level, the `var` must be used.
 
