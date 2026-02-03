@@ -61,7 +61,7 @@ func types() {
 	// any operator can be combined with `=` to modify the variable.
 
 	var x int = 10
-	x *= 3 // this multiplies x by 3
+	x *= 3 // this multiplies x by 3 and reassigns the answer to x.
 
 	// ==, !=, <, >, <=, >= (comparison operators)
 	// bit-manipulation operators — << (shift left), >> (shift right), & (bitwise AND), | (bitwise OR), ^ (bitwise XOR), &^ (bitwise AND NOT). I don't know what these are for.
@@ -73,7 +73,7 @@ func types() {
 	// only use them where approximate values are acceptable.
 	// all operators used for ints except % (modulus) can be used for floats.
 	// dividing a non-zero float by zero returns +Inf or -Inf (+ve or -ve infinity). dividing a float set to zero by zero returns NaN.
-	// dont ever compare two floats using the == pr != operators. if you really need to compare, defined a max allowed variance (epsilon) and check if the diff btw the two floats is greater than epsilon.
+	// dont ever compare two floats using the == pr != operators. if you really need to compare, define a max allowed variance (epsilon) and check if the diff btw the two floats is greater than epsilon.
 	// to really compare two floats, use the Go equivalent of the function `nearlyEqual` shown at "https://floating-point-gui.de/errors/comparison/".
 
 	//* Strings and Runes
@@ -96,7 +96,7 @@ func typeConversion() {
 	var sumIF float64 = float64(x) + y
 	var sumFI int = x + int(y)
 
-	// this smae shit happens with different-sized integer types as well.
+	// this same shit happens with different-sized integer types as well.
 
 	var b byte = 100
 	var sumIB = b + byte(x)
@@ -105,9 +105,9 @@ func typeConversion() {
 	fmt.Println(sumIF, sumFI, sumIB, sumBI)
 
 	// because of the strictness around type conversion, you cant treat another value like 0, or "" as a boolean. You'll always have to compare using comaprison operators.
-	// you cant even convert other types to boolean. thats how strict and explicit it is.
+	// you can't even convert other types to boolean. thats how strict and explicit it is.
 
-	//! literals are untyped! it is only typed when the a type is assigned to it. thats why you can do something like:
+	//! literals are untyped! it is only typed when a type is assigned to it. thats why you can do something like:
 	var uTX float64 = 10
 	var uTY float64 = 32 * 2.5
 
@@ -149,7 +149,7 @@ func assignVars() {
 
 	// when declaring variables inside a func, always favour the `:=` operator.
 	// only use `var` when trying to assign the zero value to a variable.
-	// also use the `var` when trying to explicitly apply the non-default type of a value to a `var`.
+	// also use the `var` when trying to explicitly apply the non-default type of a value to a variable.
 
 	// do this:
 	var dT1 byte = 40
@@ -169,7 +169,7 @@ func constantVars() {
 
 	const cG = "hello"
 
-  // declaration list
+	// declaration list
 	const (
 		cV1      int = 10
 		cV2, cV3     = "bye!", false
@@ -178,7 +178,7 @@ func constantVars() {
 
 func unusedVarsAndNamingVars() {
 	//* Unused Variables
-	// In Go, every declared local variabke must be read. A compile-time error is thrown when a local variable is declared and not read.
+	// In Go, every declared local variable must be read. A compile-time error is thrown when a local variable is declared and not read.
 	// the variable just has to be read once, even if it means another value is assigned to the variable without it being read again. This is valid:
 
 	x := 100

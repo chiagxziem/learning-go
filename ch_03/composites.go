@@ -40,7 +40,8 @@ func array() {
 
 	var mA1 [3][4]int // An array of 3 arrays of 4 strings.
 
-	// Arrays in Go are read using the bracket notation.
+	// Array elements in Go are read and written using the bracket notation.
+	// You can't read or write past the end of the array or use a negative index.
 
 	a5 := mA1[2]
 
@@ -70,11 +71,11 @@ func slice() {
 
 	// Slices are also diff from Arrays in certain ways
 
-	// The zero value of a slice declared without a literal (empty slice) is `nil`.
+	// The zero value of a slice declared without a literal (ie. an empty slice) is `nil`.
 
 	var eS []string
 
-	// Two slices cannot be compared ot each other. Doing it will throw an error.
+	// Two slices cannot be compared to each other. Doing it will throw an error.
 	// A slice can only be compared with `nil`.
 	// A slice with a value of `nil` means the slice is empty.
 
@@ -84,7 +85,7 @@ func slice() {
 	s3 := []int{1, 2, 3}
 	sIE := slices.Equal(s1, s3)
 
-	// The length of a slice can gotten using the func `len()`. Passing a `nil` sloce to len returns 0.
+	// The length of a slice can be gotten using the func `len()`. Passing a `nil` slice to len returns 0.
 
 	var s4 []int
 
@@ -113,7 +114,7 @@ func slice() {
 	// There might be times when you know the number of things you want to put into a slice. While, its a good thing that slices can grow, its far more efficient to create them with the correct initial capacity.
 	// We can do that using `make()`
 
-	sLC1 := make([]int, 5) // this creates a slice of len and cap of 5. The zero value isn't `nil`.
+	sLC1 := make([]int, 5) // this creates a slice of length 5. The zero value isn't `nil`. [0, 0, 0, 0, 0]
 
 	sLC2 := make([]float64, 4, 10) // a slice of length 4, and capacity 10.
 
@@ -125,11 +126,11 @@ func slice() {
 	// We can turn all the elements of a slice to the corresponding zero value using the `clear()` function.
 
 	clear(s4)
-	fmt.Println(s4)
+	fmt.Println("emptied slice", s4)
 
 	//* Slicing Slices
 	// We can slice out Slices from other slices, using the notation slice[a:b], where a is the index of the first element of the new slice and b is the index + 1 of the last element of the new slice.
-	// a or/and b can be left out. When a is removed [:b], the new slice is taken from the first element to the  element just before the element with index of b. When b is removed [a:], the new slice is taken from the element of index a to the last element if the old slice. When both are removed [:], the new slice is a copy of the old slice.
+	// a or/and b can be left out. When a is removed [:b], the new slice is taken from the first element to the element just before the element with index of b. When b is removed [a:], the new slice is taken from the element of index a to the last element of the old slice. When both are removed [:], the new slice is a copy of the old slice.
 
 	s5 := []string{"a", "b", "c", "d"}
 
@@ -153,5 +154,5 @@ func slice() {
 	fmt.Println("Y:", s6Y) // ["x", "y"]
 	fmt.Println("Z:", s6Z) // ["y", "z", "d"]
 
-  //* copy
+	//* copy
 }
