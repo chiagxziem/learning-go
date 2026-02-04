@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"maps"
 	"slices"
 )
 
@@ -10,6 +11,10 @@ func main() {
 
 	array()
 	slice()
+	stringsRunesBytes()
+	mapsInGo()
+	structs()
+	exercises()
 }
 
 func array() {
@@ -155,4 +160,283 @@ func slice() {
 	fmt.Println("Z:", s6Z) // ["y", "z", "d"]
 
 	//* copy
+	// this is used to create a new slice that's independent from the original slice being copied. it takes in the destination slice and the source slice, and returns the number of elements successfully copied. The number of elements copied is restricted by the length of the smaller slice.
+
+	s7a := []int{1, 2, 9, 8, 5, 7}
+	s7b := make([]int, 4)
+	noOfCopiedEl := copy(s7b, s7a) // 4
+
+	// a subslice of a slice can also be copied to a slice
+	s7c := make([]int, 5)
+	copy(s7c, s7a[3:])
+
+	fmt.Println("No. of copied elements", noOfCopiedEl)
+	fmt.Println(s7c)
+
+	// you can use `copy()` with arrays by taking a slice of the array
+
+	s7d := []int{1, 2, 3, 4}
+	a1a := [4]int{9, 8, 7, 6}
+	copy(s7d, a1a[:])
+	copy(a1a[:], s7d)
+
+	//* Convert Arrays to SLices
+	// we can convert arrays to slices by just taking a slice of the array.
+
+	a2a := [...]int{1, 2, 3}
+	s8a := a2a[:]
+
+	// NOTE: since we're taking a slice from the array, note that the appropriate elements will share the same memory. to prevent that, use `copy()`
+
+	a2b := [...]int{8, 9}
+	s8b := []int{1, 2}
+	copy(s8b, a2b[:])
+
+	fmt.Println(s8a, s8b)
+
+	//* Converting Slices into Arrays
+	// type conversion can be used to convert a slice into an array. this copies the data to a new memory.
+
+	s9a := []int{2, 4, 7}
+	a3a := [3]int(s9a)
+
+	fmt.Println(a3a)
+}
+
+func stringsRunesBytes() {
+	// slicing notation can be used with strings to create substrings. A single rune can also be gotten from a string using the bracket notation just like in arrays and slices. be careful be with slicing strings tho. some characters can be more than 1 byte long. since its usuallly utf-8 (except in 0x), the number of bytes in a character in a string can range from 1 to 4. this is commonly seen in emojis.
+	// the `len()` func can be used to find out the number of bytes (not characters) in a string.
+}
+
+func mapsInGo() {
+	//* MAPS
+	// slices are for sequential data (same thing you would use arrays for in JS land).
+	// maps on the other hand are for when you want to associate one value with another. it's still kind of like an slice but instead of just values, we have key-value pairs here.
+
+	// the zero value for a map is nil. you can only read a nil map. trying to write to a nil map causes a panic.
+
+	var nilMap map[string]int
+	var m1a = map[string]int{
+		"wtf":   3,
+		"hello": 5,
+	}
+
+	fmt.Println("Nil Map:", nilMap)
+	fmt.Println(m1a)
+
+	// empty maps can be created using the `:=` operator and a map literal. it's not the same as a nil map.
+	// reading and writing to an empty map is allowed.
+
+	m2a := map[int]string{}
+	m2b := map[string]bool{
+		"isBeaut": true,
+		"isTall":  false,
+	}
+
+	fmt.Println("empty map:", m2a)
+	fmt.Println(m2b)
+
+	// `make()` can also be used to make a map. apparently, maps made with `make()` still have a length of 0, and can be grown past the specified size, so i dont see why I'd ue this honestly.
+
+	m3a := make(map[int]string, 5) // this will make an empty map, I think
+
+	fmt.Println(m3a)
+
+	// passing a map to `len()` returns the number of key-value pair in that map.
+
+	//* Reading and Writing a Map
+	totalWins := map[string]int{}
+	totalWins["Anomander"] = 12
+	totalWins["Christian"] = 7
+	totalWins["Whiskeyjack"] = 9
+	totalWins["Laseen"] = 6
+
+	fmt.Println("Anomander score:", totalWins["Anomander"])
+	fmt.Println("Christian score:", totalWins["Christian"])
+
+	totalWins["Laseen"]++
+	fmt.Println("Laseen score:", totalWins["Laseen"])
+
+	// i think it's all pretty explanatory. now, a little note here: if you try to get the value assigned to a map key that was never set, you'll get the zero value of the map's value type. it's pretty neat.
+
+	fmt.Println("Apsalar score:", totalWins["Apsalar"]) // will return 0
+
+	// there are times however, when we need to know if a key is in a map. we can do that using the "comma, ok" idiom.
+
+	m4a := map[string]int{
+		"one": 1,
+		"two": 0,
+	}
+
+	v, ok := m4a["one"]
+	fmt.Println(v, ok) // 1, true
+
+	v, ok = m4a["two"]
+	fmt.Println(v, ok) // 0, true
+
+	v, ok = m4a["three"]
+	fmt.Println(v, ok) // 0, false
+
+	//* Deleting from Maps
+	// key-value pairs can be removed using the `delete()` func. it doesnt return anything.
+
+	delM := map[string]int{
+		"one": 1,
+		"two": 2,
+	}
+
+	delete(delM, "one")
+	fmt.Println(delM)
+
+	//* Emptying a Map
+	// the `clear()` func is used to empty a map, just as it is used in slices. unlike slices tho, in maps, it sets the length to 0.
+
+	clM := map[int]string{
+		1: "one",
+		2: "two",
+	}
+	clear(clM)
+	fmt.Println(clM)
+
+	//* Comparing Maps
+	// Go provides a `maps` package that contain helper funcs for comparing two maps
+
+	comM1 := map[int]string{
+		1: "one",
+	}
+	comM2 := map[int]string{
+		1: "one",
+	}
+
+	fmt.Println(maps.Equal(comM1, comM2))
+
+	//* Using Maps as Sets
+	// Go doesnt have inbuilt sets but we can use maps to emulate sets.
+
+	intSet := map[int]bool{}
+	vals := []int{5, 10, 2, 5, 8, 7, 3, 9, 1, 2, 10}
+
+	for _, v := range vals {
+		intSet[v] = true
+	}
+
+	fmt.Println(len(vals), len(intSet)) // 11, 8
+	fmt.Println(intSet[5])
+	fmt.Println(intSet[500])
+
+	// even though vals is 11 in length, len(intSet) returned 8, because you cant have duplicate items in a set.
+
+	if intSet[1] {
+		fmt.Println("100 is in the set!")
+	}
+}
+
+func structs() {
+	//* STRUCTS
+	// Maps are cool for some stuff but they have limitations. We can't constrain a map to allow only certain keys. Also, all values in a map but be of the same type. For these reasons, maps are not an ideal way to pass data from func to func.
+
+	// Structs do not have these limitations. They are the true equivalent of objects in JS land.
+
+	type person struct {
+		name string
+		age  int
+		pet  string
+	}
+
+	var joe person
+	max := person{}
+
+	fmt.Println("zero-value structs:", joe, max)
+
+	// when creating a non-empty struct, there are two styles that can be used.
+	// in the first, the struct literal is a comma-separated list of values. here, every filed must have a value, and they must be arranged the way theyre arranged in the struct type.
+
+	jane := person{
+		"Jane",
+		26,
+		"none",
+	}
+
+	// in the second style, the names of the fields are used to specify the values. we can omit fields and arrange them as we see fit. i prefer this.
+
+	eve := person{
+		age:  25,
+		name: "Eve",
+	}
+
+	// a field in a struct is read and written to using dot notation (duhhh!).
+
+	eve.name = "Evelyn"
+
+	fmt.Println(jane)
+	fmt.Println(eve)
+
+	//* Anon Structs
+	// we can declare a variable as a struct without first giving the struct type a name.
+
+	var city struct {
+		name    string
+		country string
+		popl    int
+	}
+
+	city.name = "Lagos"
+	city.country = "Nigeria"
+	city.popl = 20_000_000
+
+	// i prefer this.
+
+	pet := struct {
+		name string
+		kind string
+	}{
+		name: "Baby",
+		kind: "Dog",
+	}
+
+	fmt.Println(city.name, city.country, city.popl)
+	fmt.Println(pet)
+}
+
+func exercises() {
+	exerciseNo1()
+	exerciseNo3()
+}
+
+func exerciseNo1() {
+	greetings := []string{"Hello", "Hola", "नमस्कार", "こんにちは", "Привіт"}
+
+	gSl1 := greetings[:2]
+	gSl2 := greetings[1:4]
+	gSl3 := greetings[3:]
+
+	fmt.Println(greetings, gSl1, gSl2, gSl3)
+}
+
+func exerciseNo3() {
+	type Employee struct {
+		firstName string
+		lastName  string
+		id        int
+	}
+
+	john := Employee{
+		"John",
+		"Obi",
+		12,
+	}
+
+	esther := Employee{
+		firstName: "Esther",
+		lastName:  "Jachi",
+		id:        01,
+	}
+
+	var nnenna Employee
+
+	nnenna.firstName = "Nnenna"
+	nnenna.lastName = "Igwe"
+	nnenna.id = 23
+
+	fmt.Println(john, esther, nnenna)
 }
