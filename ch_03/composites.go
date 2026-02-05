@@ -7,10 +7,10 @@ import (
 )
 
 func main() {
-	// Composite Types — Arrays, Slices, and Maps?
+	// Composite Types — Arrays, Slices, Maps and Structs.
 
 	array()
-	slice()
+	slicesInGo()
 	stringsRunesBytes()
 	mapsInGo()
 	structs()
@@ -55,7 +55,7 @@ func array() {
 	fmt.Println(a1, a2, a3, a4, mA1, a5)
 }
 
-func slice() {
+func slicesInGo() {
 	//* SLICES
 	// Slices are different from arrays because the size isn't a part of it's type. It can also grow/shrink as needed.
 
