@@ -31,7 +31,7 @@ func array() {
 
 	a2 := [5]int{1, 2, 3, 4, 5} // [1, 2, 3, 4, 5]
 
-	// If some elements need to have the zero value of the assigned type, the nonzero elements can specified.
+	// If some elements need to have the zero value of the assigned type, the nonzero elements can be specified.
 
 	a3 := [5]int{1, 2: 24, 4: 100} // [1, 0, 24, 0, 100]
 
@@ -236,7 +236,7 @@ func mapsInGo() {
 	fmt.Println("empty map:", m2a)
 	fmt.Println(m2b)
 
-	// `make()` can also be used to make a map. apparently, maps made with `make()` still have a length of 0, and can be grown past the specified size, so i dont see why I'd ue this honestly.
+	// `make()` can also be used to make a map. apparently, maps made with `make()` still have a length of 0, and can be grown past the specified size, so i dont see why I'd use this honestly.
 
 	m3a := make(map[int]string, 5) // this will make an empty map, I think
 
@@ -333,25 +333,25 @@ func mapsInGo() {
 
 func structs() {
 	//* STRUCTS
-	// Maps are cool for some stuff but they have limitations. We can't constrain a map to allow only certain keys. Also, all values in a map but be of the same type. For these reasons, maps are not an ideal way to pass data from func to func.
+	// Maps are cool for some stuff but they have limitations. We can't constrain a map to allow only certain keys. Also, all values in a map must be of the same type. For these reasons, maps are not an ideal way to pass data from func to func.
 
 	// Structs do not have these limitations. They are the true equivalent of objects in JS land.
 
-	type person struct {
+	type Person struct {
 		name string
 		age  int
 		pet  string
 	}
 
-	var joe person
-	max := person{}
+	var joe Person
+	max := Person{}
 
 	fmt.Println("zero-value structs:", joe, max)
 
 	// when creating a non-empty struct, there are two styles that can be used.
-	// in the first, the struct literal is a comma-separated list of values. here, every filed must have a value, and they must be arranged the way theyre arranged in the struct type.
+	// in the first, the struct literal is a comma-separated list of values. here, every field must have a value, and they must be arranged the way they're arranged in the struct type.
 
-	jane := person{
+	jane := Person{
 		"Jane",
 		26,
 		"none",
@@ -359,7 +359,7 @@ func structs() {
 
 	// in the second style, the names of the fields are used to specify the values. we can omit fields and arrange them as we see fit. i prefer this.
 
-	eve := person{
+	eve := Person{
 		age:  25,
 		name: "Eve",
 	}
