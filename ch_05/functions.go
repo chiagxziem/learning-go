@@ -1,6 +1,8 @@
 package main
 
 import (
+	"context"
+	"database/sql"
 	"errors"
 	"fmt"
 	"io"
@@ -69,6 +71,24 @@ func functions() {
 		os.Exit(1)
 	}
 	fmt.Println(result3, remainder3)
+
+	i := 2
+	s := "Hello"
+	p := person{}
+
+	modifyFails(i, s, p)
+	fmt.Println("call by value: ", i, s, p)
+
+	m := map[int]string{
+		1: "first",
+		2: "second",
+	}
+	modMap(m)
+	fmt.Println("maps are not call by value: ", m)
+
+	sl := []int{1, 2, 3}
+	modSlice(sl)
+	fmt.Println("slices are not call by value: ", sl)
 }
 
 // Other functions can accept parameters and return values
@@ -122,7 +142,8 @@ func addTo(base int, vals ...int) []int {
 //* Multiple Return Values
 // unlike other languages, a function in Go can return multiple values.
 // This shit is amazing. Every return instance in the function must return all the values specified.
-// This is commonly used in functions where an error has to be returned if an error occured. If no error occured, `nil` is returned. by convention, the error is always the last value (or only) value returned from a function.
+// This is commonly used in functions where an error has to be returned if an error occured. If no error occured, `nil` is returned.
+// By convention, the error is always the last value (or only) value returned from a function.
 
 func divAndRemainderOne(num, denom int) (int, int, error) {
 	if denom == 0 {
@@ -178,7 +199,7 @@ func divAndRemainderFour(num, denom int) (result int, remainder int, err error) 
 }
 
 //* Functions Are Values
-// Functions in GO are values, and the type of a function is built out of the `func` keyword and the types of the parameters and return values. This combination is called the signature of the function.
+// Functions in Go are values, and the type of a function is built out of the `func` keyword and the types of the parameters and return values. This combination is called the signature of the function.
 // Since functions are values, you can declare a function variable.
 
 var myFuncVariable func(string) int
@@ -186,13 +207,19 @@ var myFuncVariable func(string) int
 // The default zero value for a func value is nil.
 // Having functions as values allows us to do some clever things. For example, a simple calculator using functions as values.
 
-func add(i, j int) int { return i + j }
-func sub(i, j int) int { return i - j }
-func mul(i, j int) int { return i * j }
-func div(i, j int) int { return i / j }
+// exercise 1: adding division by zero error handling
+func add(i, j int) (int, error) { return i + j, nil }
+func sub(i, j int) (int, error) { return i - j, nil }
+func mul(i, j int) (int, error) { return i * j, nil }
+func div(i, j int) (int, error) {
+	if j == 0 {
+		return 0, errors.New("division by zero")
+	}
+	return i / j, nil
+}
 
 func calc() {
-	opMap := map[string]func(int, int) int{
+	opMap := map[string]func(int, int) (int, error){
 		"+": add,
 		"-": sub,
 		"*": mul,
@@ -235,7 +262,11 @@ func calc() {
 			continue
 		}
 
-		result := opFunc(p1, p2)
+		result, err := opFunc(p1, p2)
+		if err != nil {
+			fmt.Println(err)
+		}
+
 		fmt.Println(result)
 	}
 }
@@ -246,7 +277,7 @@ func calc() {
 type opFuncType func(int, int) int
 
 //* Anonymous Functions
-// We can define Anon functions by putting the input parenthesis immediately following the func keyword. They can then be assigned to variables. This is the only way a function can be defined inside another function.
+// We can define Anon functions by putting the input parenthesis immediately following the func keyword. They can then be assigned to variables. This is the only way a function can be defined inside another function (also called a closure).
 
 func outer() {
 	inner := func(j int) {
@@ -373,3 +404,88 @@ func deferExample() int {
 // existing: 30
 // second: 20
 // first: 10
+
+// Now, defer functions can be used to modify the return value of the surrounding function.
+// This is the best reason to use named return values.
+// An example is a defer func handling DB transactions cleanup.
+
+//
+
+func DoSomeInserts(ctx context.Context, db *sql.DB, v1, v2 string) (err error) {
+	tx, err := db.BeginTx(ctx, nil)
+	if err != nil {
+		return err
+	}
+
+	defer func() {
+		if err == nil {
+			err = tx.Commit()
+		}
+		if err != nil {
+			tx.Rollback()
+		}
+	}()
+
+	_, err = tx.ExecContext(ctx, "INSERT INTO FOO (val) values $1", v1)
+	if err != nil {
+		return err
+	}
+
+	// use tx to do more db inserts here
+
+	return nil
+}
+
+//* Go is Call by Value
+// This means that when a variable is passed as the parameter to a function, Go always makes a copy of the value of the variable.
+
+type person struct {
+	age  int
+	name string
+}
+
+func modifyFails(i int, s string, p person) {
+	i = i * 2
+	s = "Goodbye"
+	p.name = "Bob"
+}
+
+// You'll see that for primitive types, and most other types like Structs, functions can't modify the values of variables passed as parameters into it.
+// The behaviour is a little bit different for slices and maps.
+
+// the reason why maps and slices act differently is because they're both implemented with pointers.
+
+func modMap(m map[int]string) {
+	m[2] = "hello"
+	m[3] = "goodbye"
+	delete(m, 1)
+}
+
+func modSlice(s []int) {
+	for k, v := range s {
+		s[k] = v * 2
+	}
+	s = append(s, 10)
+}
+
+// exercise 2: using defer
+func fileLen(n string) (int, error) {
+	// try to open the file in read-only
+	f, err := os.Open(n)
+	if err != nil {
+		return 0, err
+	}
+	// close file after function finishes running
+	defer f.Close()
+
+	// get file stats
+	info, err := f.Stat()
+	return int(info.Size()), nil
+}
+
+// exercise 3
+func prefixer(prefix string) func(string) string {
+	return func(base string) string {
+		return prefix + " " + base
+	}
+}
