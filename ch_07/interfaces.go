@@ -2,216 +2,91 @@ package main
 
 import (
 	"fmt"
-	"time"
+	"math"
 )
 
-func main() {
-	types()
-	methods()
-	iotaInGo()
+type Shaper interface {
+	Area() float64
+	Perimeter() float64
 }
 
-func types() {
-	//* Types
-	// When declaring types, the keyword `type` is written first, followed by the name of the type followed by the primitve or composite type being declared.
+type Rectangle struct {
+	Width, Height float64
+}
 
-	type Score int
-	type Converter func(string) Score
-	type TeamScores map[string]Score
+func (r Rectangle) Area() float64 {
+	return r.Width * r.Height
+}
 
-	type Car struct {
-		Name     string
-		Maker    string
-		YearMade int
+func (r Rectangle) Perimeter() float64 {
+	return 2 * (r.Width + r.Height)
+}
+
+type Circle struct {
+	Radius float64
+}
+
+func (r Circle) Area() float64 {
+	return math.Pi * r.Radius * r.Radius
+}
+
+func (r Circle) Perimeter() float64 {
+	return 2 * math.Pi * r.Radius
+}
+
+func interfaces() {
+	// Interfaces in Go define a set of method signatures. Any type that implements all these
+	// methods automatically satisfies the interface. no explicit declaration required.
+	// This is called implicit satisfaction.
+
+	// Interfaces are usually named with words ending with "-er".
+
+	// From the types and their respective methods, we can see that both the Rectangle and Circle
+	// types, satisfy the Shaper interface.
+
+	printShapeInfo(Rectangle{
+		Width:  12.54,
+		Height: 9.38,
+	})
+	printShapeInfo(Circle{
+		Radius: 9.99,
+	})
+
+	var s Shaper = Rectangle{Width: 12, Height: 3}
+
+	fmt.Printf("%T\n", s)
+
+	//* The empty interface
+	// `any` is an alias for `interface{}`, and it has no methods. This interface will accept every type.
+
+	printAnything("wtf")
+	printAnything(920)
+	printAnything(Circle{Radius: 31})
+
+	//* Embedding and Interfaces
+	// Intrerfaces can also be embedded into other interfaces,
+
+	type Reader interface {
+		Read(p []byte) (n int, err error)
 	}
 
-	// Types can be defined at any block level but they must be accessed from within that scope.
-}
-
-// ———— METHOD DEFINITIONS START ————
-
-type Person struct {
-	FirstName string
-	LastName  string
-	Age       int
-}
-
-func (p Person) String() string {
-	return fmt.Sprintf("%s %s, age %d", p.FirstName, p.LastName, p.Age)
-}
-
-type Counter struct {
-	total       int
-	lastUpdated time.Time
-}
-
-func (c *Counter) Increment() {
-	c.total++
-	c.lastUpdated = time.Now()
-}
-func (c Counter) String() string {
-	return fmt.Sprintf("total: %d, last updated: %v", c.total, c.lastUpdated)
-}
-
-type IntTree struct {
-	val         int
-	left, right *IntTree
-}
-
-func (it *IntTree) Insert(val int) *IntTree {
-	if it == nil {
-		return &IntTree{val: val}
+	type Closer interface {
+		Close() error
 	}
-	if val < it.val {
-		it.left = it.left.Insert(val)
-	} else if val > it.val {
-		it.right = it.right.Insert(val)
+
+	type ReadCloser interface {
+		Reader
+		Closer
 	}
-	return it
+
+	//* Accept Interfaces, return Structs
+  
 }
 
-func (it *IntTree) Contains(val int) bool {
-	switch {
-	case it == nil:
-		return false
-	case val < it.val:
-		return it.left.Contains(val)
-	case val > it.val:
-		return it.right.Contains(val)
-	default:
-		return true
-	}
+func printShapeInfo(s Shaper) {
+	fmt.Printf("Area: %.2f, Perimeter: %.2f\n", s.Area(), s.Perimeter())
 }
 
-type Adder struct {
-	start int
-}
-
-func (a Adder) AddTo(val int) int {
-	return a.start + val
-}
-
-// ———— METHOD DEFINITIONS END ————
-
-func methods() {
-	//* Methods
-	// The methods for a user-defined type are always defined at the package block level.
-	// Method declarations look like function declarations, with one addition: the receiver specification.
-	// The receiver specification appears between the func keyword and the name of the method.
-	// By convention, the receiver name is a short abbreviation of the type's name, usually its first letter.
-
-	// Methods differ from functions in the sense that they can only be defined at the package block level, while functions can be defined in any block.
-
-	p := Person{
-		FirstName: "Gozman",
-		LastName:  "Faraday",
-		Age:       25,
-	}
-	output := p.String()
-	fmt.Println(output)
-
-	// Methods can have pointer receivers or value receivers. If the method modifies the receiver,
-	// a pointer receiver must be used. If the method needs to handle nil instances, then a
-	// pointer receiver must be used. If the method doesn't modify the receiver, then a value
-	// receiver can be used.
-
-	// It's common practice to use pointer receivers in all methods of a type if even one of the
-	// methods uses pointer receivers. It's done to be consistent.
-
-	var c Counter
-	fmt.Println(c.String())
-	c.Increment()
-	fmt.Println(c.String())
-
-	//* Functions or Methods: When to choose
-	// Use functions when the logic is more general or operates using multiple types.
-	// Use methods when the logic is connected tightly to the type.
-
-	//* Using Methods for `nil` Instances
-	// Man, I don't understand anything they did here.
-
-	var it *IntTree
-	it = it.Insert(5)
-	it = it.Insert(3)
-	it = it.Insert(10)
-	it = it.Insert(2)
-	fmt.Println(it.Contains(2))
-	fmt.Println(it.Contains(12))
-
-	//* Method Expression
-	// Methods are usually called by creating an instance of the type and then invoking its method:
-
-	myAdder := Adder{start: 2}
-	fmt.Println(myAdder.AddTo(5)) // prints 7
-
-	// The method can also be assigned to a variable or passed to a parameter of a function.
-
-	f1 := myAdder.AddTo
-	fmt.Println(f1(13)) // prints 15
-
-	// It can be called like a closure, in which it is called a Method Expression.
-
-	f2 := Adder.AddTo
-	fmt.Println(f2(myAdder, 17)) // prints 19
-
-	// When using a Method Expression, the receiver for the method is always the first parameter.
-
-	//* Type Declarations Aren’t Inheritance
-	// A user-defined type can also be based on another user-defined type.
-	// However, when this happen, methods arw not inherited. The second user-defined type only gets
-	// the data structure of the first one.
-
-	type Score int
-	type HighScore Score
-
-	var i int = 30
-	var s Score = 10
-	var hs HighScore = 20
-
-	// hs = s // compilation error!
-	// s = i // compilation error!
-	s = Score(i)      // ok
-	hs = HighScore(s) // ok
-
-	fmt.Println(hs)
-}
-
-func iotaInGo() {
-	//* iota
-	// Go doesnt have an enumeration type. Instead it has `iota`, which lets you assign an
-	// increasing value to a set of constants.
-	// When using the iota, the practice is to first define a type based on int that'll represent all the valid values:
-
-	// Next, use a const block to define a set of values for the type:
-
-	type MailCategory int
-
-	const (
-		Uncategorized MailCategory = iota
-		Personal
-		Social
-		Advertisements
-	)
-
-	// the first constant in the const block has the type specified and its value is set to `iota`.
-	// other constants in the const block do not have the type specified.
-	// when the Go compiler sees this, it gives the same type and value to the subsequent constants.
-	// therefore, the value that is given to all the constants is `iota`.
-	// `iota` starts from 0, and increments by 1 with each constant in the const block.
-	// when a new const block is created, `iota` starts from 0.
-
-	// the value of iota increaments for each constants in the const block regardless of the value assigned to each constant.
-
-	const (
-		Field1 = 0        // 0
-		Field2 = 1 + iota // 2; since iota for Field2 is 1
-		Field3 = 20       // 20
-		Field4            // 20; since no value is explicitly assigned and preceding constant is 20
-		Field5 = iota     // 4; since iota for Field5 is 4
-	)
-
-	fmt.Println(Field1, Field2, Field3, Field4, Field5)
-
-	// only use iota-based enumeration when you care about differentiating a set of values,
-	// and dont particularly care what the value is behind the scenes.
+func printAnything(v any) {
+	fmt.Println(v)
 }
