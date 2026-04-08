@@ -261,7 +261,7 @@ func mapsInGo() {
 
 	fmt.Println("Apsalar score:", totalWins["Apsalar"]) // will return 0
 
-	// there are times however, when we need to know if a key is in a map. we can do that using the "comma, ok" idiom.
+	// there are times however, when we need to know if a key is in a map. we can do that using the "comma-ok" idiom.
 
 	m4a := map[string]int{
 		"one": 1,

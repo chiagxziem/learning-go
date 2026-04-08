@@ -28,7 +28,7 @@ func pointers() {
 	// Always make sure the pointer is non-nil. If you try to dereference a nil pointer, the program will panic.
 
 	var nX *int
-	fmt.Println(nX == nil)
+	fmt.Println(nX == nil) // true
 	// fmt.Println(*nX) // will cause a panic
 
 	// A pointer type is a type that represents a pointer. It has an * before a type name. It can be based on any type.
@@ -48,14 +48,14 @@ func pointers() {
 	}
 	pS1 := &Foo{} // & can be used before a struct literal
 
-	// pP1 := &23 // can not be used before primitive literals, instead we can do
+	// pP1 := &"some string" // can not be used before primitive literals, instead we can do
 	pP1 := "some string"
 	pointerPP1 := &pP1
 
 	fmt.Println(pS1, pointerPP1)
 
 	// pointer types can be used as the type of fields in a struct, but when initialising the struct,
-	// but if the pointer is of a primitive type, a literal cant be assigned directly to the field.
+	// if the pointer is of a primitive type, a literal cant be assigned directly to the field.
 
 	type Person struct {
 		fName string
@@ -135,13 +135,13 @@ func pointers() {
 	// you're copying a pointer. Therefore, modifications to a map passed to a function will
 	// always be reflected in the original map.
 	//! Because of this, you should be careful about passing maps into a function, or returning a map from a function.
-	// Rather than passing a map around, use a struct.
+	//? Rather than passing a map around, use a struct.
 
 	// Slices are more complicated. Modifications to the contents of a slice passed to a function is always reflected in the original slice, but using append doesn't reflect on the original slice even if the capacity of the original slice is large enough.
-	// The reason for this is that, a slice is implemented as a struct with three fields. an int field for its length, and int field for its capacity, and a pointer to a block of memory which contains the array.
+	// The reason for this is that, a slice is implemented as a struct with three fields. an int field for its length, an int field for its capacity, and a pointer to a block of memory which contains the array.
 	// Now, when a slice is copied to a diff variable or passed into a function, a copy of the capacity, length and pointer of the original slice is made. Updating the contents of this copied slice means updating the value at that pointer, which means updating the value of the original slice.
-	// However, updating the length and/or the capacity of the copied slice doesnt reflect in the original slice because it the slice being modified is a copy, and Go is a call-by-value language.
-	// If the slice copy is appended to and there isnt enough capacity in the original slice for the new values, a new, bigger memnory block is allocated for the slice copy, the values are coopied over, and the pointer, length, and capacity in the slice copy are updated.
+	// However, updating the length and/or the capacity of the copied slice doesnt reflect in the original slice because the slice being modified is a copy, and Go is a call-by-value language.
+	// If the slice copy is appended to and there isnt enough capacity in the original slice for the new values, a new, bigger memnory block is allocated for the slice copy, the values are copied over, and the pointer, length, and capacity in the slice copy are updated.
 }
 
 func makePointer[T any](t T) *T {
