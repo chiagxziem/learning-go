@@ -2,15 +2,53 @@ package main
 
 import (
 	"fmt"
+	"os"
 	"time"
 )
 
 func main() {
-	types()
-	methods()
-	iotaInGo()
-	embedding()
-	interfaces()
+	chiLeague := League{
+		Name: "Chi League",
+		Teams: map[string]Team{
+			"Spain": {
+				Name:    "Spain",
+				Players: []string{"Player1", "Player2"},
+			},
+			"Bolivia": {
+				Name:    "Bolivia",
+				Players: []string{"Player1", "Player2"},
+			},
+			"USA": {
+				Name:    "USA",
+				Players: []string{"Player1", "Player2"},
+			},
+			"Nigeria": {
+				Name:    "Nigeria",
+				Players: []string{"Player1", "Player2"},
+			},
+			"Thailand": {
+				Name:    "Thailand",
+				Players: []string{"Player1", "Player2"},
+			},
+		},
+		Wins: map[string]int{},
+	}
+
+	chiLeague.MatchResult("Spain", 4, "Nigeria", 2)
+	chiLeague.MatchResult("Bolivia", 1, "USA", 3)
+	chiLeague.MatchResult("Nigeria", 3, "Thailand", 2)
+	chiLeague.MatchResult("Spain", 3, "Bolivia", 2)
+	chiLeague.MatchResult("Nigeria", 1, "USA", 0)
+	chiLeague.MatchResult("Thailand", 1, "Bolivia", 2)
+	chiLeague.MatchResult("Bolivia", 3, "Nigeria", 4)
+	chiLeague.MatchResult("USA", 2, "Spain", 3)
+	chiLeague.MatchResult("Thailand", 3, "Spain", 5)
+	chiLeague.MatchResult("USA", 4, "Thailand", 1)
+
+	results := chiLeague.Ranking()
+	fmt.Println(results)
+
+	RankPrinter(&chiLeague, os.Stdout)
 }
 
 func types() {
@@ -55,34 +93,23 @@ func (c Counter) String() string {
 	return fmt.Sprintf("total: %d, last updated: %v", c.total, c.lastUpdated)
 }
 
-type IntTree struct {
-	val         int
-	left, right *IntTree
+type User struct {
+	Name string
 }
 
-func (it *IntTree) Insert(val int) *IntTree {
-	if it == nil {
-		return &IntTree{val: val}
-	}
-	if val < it.val {
-		it.left = it.left.Insert(val)
-	} else if val > it.val {
-		it.right = it.right.Insert(val)
-	}
-	return it
+func (u *User) Greet() string {
+	return "Hello!"
 }
 
-func (it *IntTree) Contains(val int) bool {
-	switch {
-	case it == nil:
-		return false
-	case val < it.val:
-		return it.left.Contains(val)
-	case val > it.val:
-		return it.right.Contains(val)
-	default:
-		return true
+func (u *User) CallName() string {
+	return fmt.Sprintf("Hello, %s", u.Name)
+}
+
+func (u *User) SafeCallName() string {
+	if u == nil {
+		return "Hello, stranger"
 	}
+	return fmt.Sprintf("Hello, %s", u.Name)
 }
 
 type Adder struct {
@@ -130,15 +157,17 @@ func methods() {
 	// Use methods when the logic is connected tightly to the type.
 
 	//* Using Methods for `nil` Instances
-	// Man, I don't understand anything they did here.
+	// In Go, methods can be called on nil pointers. If the method doesnt access any field of the struct the pointer is referencing, then everything will work as expected. If the method however, accesses the fields of the referenced struct, a panic will occur.
 
-	var it *IntTree
-	it = it.Insert(5)
-	it = it.Insert(3)
-	it = it.Insert(10)
-	it = it.Insert(2)
-	fmt.Println(it.Contains(2))
-	fmt.Println(it.Contains(12))
+	var u *User = nil
+
+	fmt.Println(u.Greet()) // no panic happens; prints `Hello!`
+
+	// fmt.Println(u.CallName()) // panic happens, coz struct fields were accessed!
+
+	// A nil check can be added to methods to prevent a panic.
+
+	fmt.Println(u.SafeCallName()) // prints `Hello, stranger` since its a nil pointer
 
 	//* Method Expression
 	// Methods are usually called by creating an instance of the type and then invoking its method:

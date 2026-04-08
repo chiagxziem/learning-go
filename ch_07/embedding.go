@@ -2,6 +2,8 @@ package main
 
 import "fmt"
 
+// ———— METHOD DEFINITIONS START ————
+
 type Employee struct {
 	Name string
 	ID   string
@@ -28,6 +30,8 @@ type Outer struct {
 	Inner
 	X int
 }
+
+// ———— METHOD DEFINITIONS END ————
 
 func embedding() {
 	// while Go doesnt have inheritance, it has embeddings for composition and promotion.
