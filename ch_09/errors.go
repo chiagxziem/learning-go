@@ -64,3 +64,60 @@ func SentinelErrors() {
 		fmt.Println("told you so")
 	}
 }
+
+func ErrorsAreValues() {
+	// somce `error` is an interface, we can define our own errors that include additional info
+	// for logging or error handling.
+
+	// check `LoginAndGetData("", "", "")`
+
+	// if youre using your own error type, be sure to not return an uninitialized instance.
+	// You can return the error (or nil) instead of creating a var with the custom error type
+	// you can also assign the inbuilt `error` type to the error you want to return even if you
+	// plan on using a custom error
+}
+
+type Status int
+
+const (
+	Unauthorized Status = iota + 1
+	NotFound
+)
+
+type StatusErr struct {
+	Status  Status
+	Message string
+}
+
+func (se StatusErr) Error() string {
+	return se.Message
+}
+
+func Login(uid, pwd string) (string, error) {
+	var token string
+	return token, nil
+}
+func GetData(token, file string) ([]byte, error) {
+	var data []byte
+	return data, nil
+}
+
+func LoginAndGetData(uid, pwd, file string) ([]byte, error) {
+	token, err := Login(uid, pwd)
+	if err != nil {
+		return nil, StatusErr{
+			Status:  Unauthorized,
+			Message: fmt.Sprintf("invalid credentials for user %s", uid),
+		}
+	}
+
+	data, err := GetData(token, file)
+	if err != nil {
+		return nil, StatusErr{
+			Status:  NotFound,
+			Message: fmt.Sprintf("file %s not found", file),
+		}
+	}
+
+	return data, nil
+}
