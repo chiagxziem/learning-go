@@ -180,7 +180,7 @@ func slicesInGo() {
 	copy(s7d, a1a[:])
 	copy(a1a[:], s7d)
 
-	//* Convert Arrays to SLices
+	//* Convert Arrays to Slices
 	// we can convert arrays to slices by just taking a slice of the array.
 
 	a2a := [...]int{1, 2, 3}

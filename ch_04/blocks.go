@@ -246,7 +246,7 @@ func switchStatements() {
 
 	// if a case is empty, then nothing happens. thats why in the sample above, the words "gopher", and "octopus" are not printed to the console.
 
-	// the switch statement does have a `fallthrough` keyword but it should be used at all. restructure your code if you find yourself needing to use it.
+	// the switch statement does have a `fallthrough` keyword but it should never be used at all. restructure your code if you find yourself needing to use it.
 
 	// the `break` keyword can also be used inside a case of a switch, but should be used sparingly. you should only use a `break` in a case of a switch, if you want to break out of a containing `for` loop. in that scenario, the for loop must be labelled, else Go will asssume you want to just break out of the case and not the loop.
 
@@ -266,7 +266,7 @@ loop:
 	}
 
 	// Blank Switches
-	// switches can also be written in such a way that the value being compared against isnt specified. its called a blank switch. a regular switch only allows you ti check a value for equality. a blank switch allows you to use any boolean comarison for each case.
+	// switches can also be written in such a way that the value being compared against isnt specified. its called a blank switch. a regular switch only allows you to check a value for equality. a blank switch allows you to use any boolean comarison for each case.
 
 	names := []string{"Emeka", "Uche", "Chinero", "Ada", "Chiagoziem", "Kamharida"}
 
