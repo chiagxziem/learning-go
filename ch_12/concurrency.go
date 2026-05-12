@@ -1,14 +1,15 @@
 package main
 
-import "fmt"
+import (
+	"context"
+	"fmt"
+)
 
 func main() {
-	Goroutines()
-	// Channels()
-	Select()
+	concurrencyPracticesAndPatterns()
 }
 
-func Goroutines() {
+func goroutines() {
 	// Goroutines are Go's way of doing things concurrently. They're lightweight threads created
 	// and managed by the Go runtime rather than the OS.
 	// A goroutine is a function that runs alongside the main program and it is started with the `go`
@@ -20,7 +21,7 @@ func Goroutines() {
 	// closures take care of the concurrent business.
 }
 
-func Channels() {
+func channels() {
 	// Goroutines communicate using channels. They're created using the `make()` function.
 
 	ch1 := make(chan int)
@@ -100,7 +101,7 @@ func Channels() {
 	// To prevent this, we use a `sync.WaitGroup`.
 }
 
-func Select() {
+func selectInGoroutines() {
 	// The `select` keyword is a little bit like `switch`. It allows a goroutine to read from or write
 	// to a set of multiple channels.
 
@@ -124,4 +125,66 @@ func Select() {
 	// if multiple cases have channels that can be read from or written to, `select` picks randomly from
 	// any of its cases that can go forward; order is unimportant. This is very different from how a
 	// `switch` statement works (it always picks the first case that resolves to true).
+}
+
+func concurrencyPracticesAndPatterns() {
+	//* Keep APIs Concurrency-Free
+	// never allow go code concerning to be present in your API. unless you're making a library that has
+	// a concurrency helper of course. this simply means that stuff like channels should never be
+	// exported.
+
+	//* Goroutines, `for` Loops, and Varying Variables
+	// anytime a closure depends on a variabele whose value must change, you must pass the value into
+	// the closure to make sure a unique copy of the variable is made. this applies for when using
+	// closures for goroutines as well.
+
+	example01()
+
+	//* Always Clean Up Goroutines
+	// whenever you launch a goroutine, you must make sure that goroutine will eventually exit.
+	// an easy way to do this is to use Context tp terminate the goroutine.
+
+	example02()
+}
+
+func example01() {
+	a := []int{2, 4, 6, 8, 10}
+	ch := make(chan int, len(a))
+	for _, v := range a {
+		go func() {
+			ch <- v * 2
+		}()
+	}
+	for range len(a) {
+		fmt.Println(<-ch)
+	}
+}
+
+func countTo(ctx context.Context, max int) <-chan int {
+	ch := make(chan int)
+
+	go func() {
+		defer close(ch)
+		for i := range max {
+			select {
+			case <-ctx.Done():
+				return
+			case ch <- i:
+			}
+		}
+	}()
+
+	return ch
+}
+
+func example02() {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	ch := countTo(ctx, 10)
+	for i := range ch {
+		if i > 5 {
+			break
+		}
+		fmt.Println(i)
+	}
 }
