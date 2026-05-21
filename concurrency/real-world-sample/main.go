@@ -54,13 +54,13 @@ func worker(
 
 		select {
 		case <-ctx.Done():
-			fmt.Printf("worker %d: cancelled before picking up job\n", id)
+			fmt.Printf("worker %d: cancelled while waiting for job\n", id)
 			return
 
 		case job, ok := <-jobs:
 			// check if the jobs channel is closed
 			if !ok {
-				fmt.Printf("worker %d: job channel closed, exiting\n", id)
+				fmt.Printf("worker %d: jobs channel closed, exiting\n", id)
 				return
 			}
 

@@ -88,7 +88,6 @@ func WrappedErrors() {
 	// the wrapped error can also be unwrapped using errors.Unwrap().
 
 	err := FileChecker("not_real.txt")
-
 	if err != nil {
 		fmt.Println(err)
 		if wErr := errors.Unwrap(err); wErr != nil {
@@ -235,7 +234,6 @@ func LoginAndGetData(uid, pwd, file string) ([]byte, error) {
 
 func FileChecker(name string) error {
 	f, err := os.Open(name)
-
 	if err != nil {
 		return fmt.Errorf("in FileChecker: %w", err)
 	}
