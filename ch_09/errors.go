@@ -145,7 +145,7 @@ func IsAndAs() {
 	// a type assertion or type switch can't be used to match a wrapped custom error.
 
 	// Go solves these issues using `errors.Is()` and `errors.As()`.
-	// `errors.Is()` takes in too parameters: the error being checked, and the instance we're
+	// `errors.Is()` takes in two parameters: the error being checked, and the instance we're
 	// comparing it against. It returns true if any error in the error tree matches the
 	// provided sentinel error.
 
@@ -167,7 +167,7 @@ func IsAndAs() {
 	// variable of the type that you're looking for.
 
 	// if the function returns true, an error in the error tree was found that matched and the
-	// matching error is assigned to the second parameter. if the func returns false, no no match
+	// matching error is assigned to the second parameter. if the func returns false, no match
 	// was found in the error tree.
 
 	// trying with the `FileChecker(name string) error`, we have:
